@@ -8,6 +8,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_ctsr\ctsr;
+use mod_ctsr\ctsr_form as form;
+use mod_ctsr\output\ctsr_view;
 
 require('../../config.php');
 require_once($CFG->dirroot.'/mod/ctsr/lib.php');
@@ -29,6 +32,12 @@ require_course_login($course, true, $cm);
 $completion = new completion_info($COURSE);
 $completion->set_module_viewed($cm);
 
+$persistent = ctsr::get_record(['ctsr_id' => $ctsr->id, 'user_id' => $USER->id]);
+$customdata = [
+    'persistent' => $persistent,    // An instance, or null
+    'ctsr_id' => $ctsr->id,
+    'user_id' => $USER->id
+];
 
 
 
@@ -36,13 +45,27 @@ $completion->set_module_viewed($cm);
 $PAGE->set_url('/mod/ctsr/view.php', ['id' => $cmid]);
 $PAGE->set_title($COURSE->shortname. ': '. $ctsr->name);
 $PAGE->set_heading($COURSE->fullname);
-// We don't want users starting, hitting the back button, and seeing (and clicking) another start button
+$PAGE->requires->js_call_amd('mod_ctsr/enable_tooltips', 'init');
+$PAGE->requires->js_call_amd('mod_ctsr/store_tab', 'init');
+$PAGE->requires->js_call_amd('mod_ctsr/show_total', 'init');
+
 $PAGE->set_activity_record($ctsr);
+
+$form = new form($PAGE->url->out(false), $customdata);
+if ($data = $form->get_data()) {
+    if (empty($data->id)) {
+        $persistent = new ctsr(0, $data);
+        $persistent->create();
+    } else {
+        $persistent->from_record($data);
+        $persistent->update();
+    }
+}
 
 // Output
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($ctsr->name), 2);
 echo $OUTPUT->box_start('mod_introbox', 'ctsrintro');
-echo $OUTPUT->render(new ctsr_view($cmid, $ctsr));
+echo $OUTPUT->render(new ctsr_view($cmid, $form));
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
