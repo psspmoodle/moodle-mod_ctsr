@@ -41,7 +41,7 @@ class ctsr_view implements renderable, templatable
             'Pacing & efficient use of time',
             'Interpersonal effectiveness',
             'Eliciting of appropriate emotional expression',
-            'Eliciting Key Cognitions',
+            'Eliciting key cognitions',
             'Eliciting & planning behaviours',
             'Guided discovery',
             'Conceptual integration',

@@ -65,7 +65,5 @@ if ($data = $form->get_data()) {
 // Output
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($ctsr->name), 2);
-echo $OUTPUT->box_start('mod_introbox', 'ctsrintro');
 echo $OUTPUT->render(new ctsr_view($cmid, $form));
-echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

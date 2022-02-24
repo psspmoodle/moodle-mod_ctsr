@@ -16,7 +16,7 @@ function ctsr_supports($feature): ?bool {
 }
 
 /**
- * Adds ctsr instance and creates new record in ctsr_complete table.
+ * Add ctsr instance.
  *
  * @param stdClass $data
  * @param mod_ctsr_mod_form|null $mform
@@ -34,7 +34,7 @@ function ctsr_add_instance(stdClass $data, mod_ctsr_mod_form $mform = null): int
 }
 
 /**
- * Updates ctsr instance.
+ * Update ctsr instance.
  *
  * @param $data
  * @param $mform

@@ -1,0 +1,24 @@
+.flush {
+    margin-left: -1rem;
+    margin-right: -1rem;
+}
+
+a.ctsr-tab {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.ctsr-tab {
+    border-left: thin solid #eee;
+    border-top: thin solid #eee;
+    border-bottom: thin solid #eee;
+    transition: all 0.2s ease-in-out;
+}
+
+.ctsr-tab:hover {
+    background: #e1f5fe;
+}
+
+a#pills-1-tab {
+    border-left: 0;
+}
