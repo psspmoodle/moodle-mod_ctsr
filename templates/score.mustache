@@ -1,0 +1,21 @@
+<h3>Item {{{number}}}: {{{item}}}</h3>
+<table class="table mb-5">
+    <thead>
+        <tr>
+            <td class="text-center">
+                Your score
+            </td>
+            <td class="text-center">
+                Expert's score
+            </td>
+            <td class="text-center">
+                Learner mean score
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+    {{#content}}
+        {{> mod_ctsr/score_row }}
+    {{/content}}
+    </tbody>
+</table>

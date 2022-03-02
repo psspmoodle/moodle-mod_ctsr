@@ -7,7 +7,7 @@ use core\persistent;
 
 defined('MOODLE_INTERNAL') || die();
 
-class ctsr extends persistent
+class ctsr_user extends persistent
 {
 
     const TABLE = 'ctsr_user';
@@ -169,7 +169,11 @@ class ctsr extends persistent
             'item_12_commentsformat' => array(
                 'type' => PARAM_INT,
                 'default' => 1
-            )
+            ),
+            'submitted' => array(
+                'type' => PARAM_INT,
+                'default' => 0
+            ),
         );
     }
 }

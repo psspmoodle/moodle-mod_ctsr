@@ -23,7 +23,8 @@ class ctsr_view implements renderable, templatable
         $this->form = $form;
     }
 
-    private function get_next_non_textnode($node) {
+    private function get_next_non_textnode($node)
+    {
         foreach ($node->childNodes as $child) {
             if ($child->nodeType !== XML_TEXT_NODE) {
                 return $child;
@@ -92,14 +93,8 @@ class ctsr_view implements renderable, templatable
         $submit->removeAttribute('class');
         $data->update = $update->ownerDocument->saveHTML($update);
         $data->submit = $submit->ownerDocument->saveHTML($submit);
-
         // Close form
         $data->formclose = '</form>';
-
-        $html = $form->ownerDocument->saveHTML($form);
-
-
-
         return $data;
     }
 }

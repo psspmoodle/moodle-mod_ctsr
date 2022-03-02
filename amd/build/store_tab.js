@@ -1,6 +1,7 @@
 define(['core/localstorage'], function(LocalStorage) {
     return {
         init: function() {
+            // const cmid = document.querySelector('body').classList.contains();
             if (LocalStorage.get('mod_ctsr/tab')) {
                 const activeTab = LocalStorage.get('mod_ctsr/tab')
                 document.querySelector('#pills-1-tab').classList.remove('active')

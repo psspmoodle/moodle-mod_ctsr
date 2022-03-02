@@ -84,7 +84,7 @@ class backup_ctsr_activity_structure_step extends backup_activity_structure_step
 
         // Only happen if we are including user info
         if ($userinfo) {
-            $ctsruser->set_source_table('ctsr_user', ['path_id' => backup::VAR_PARENTID]);
+            $ctsruser->set_source_table('ctsr_user', ['ctsr_id' => backup::VAR_PARENTID]);
         }
 
         // Return the root element (ctsr), wrapped into standard activity structure
