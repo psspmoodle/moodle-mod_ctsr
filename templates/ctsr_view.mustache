@@ -1,8 +1,10 @@
+{{{intro}}}
+
 {{{formopen}}}
 {{{hiddenfields}}}
 <div class="container">
     <div class="row my-3">
-        <div class="col-12 border p-3">
+        <div class="col-12 border pb-3">
             <ul class="nav nav-pills mb-3 d-flex justify-content-center flush" id="pills-tab" role="tablist">
                 {{#tabs}}
                     {{> mod_ctsr/nav }}
@@ -13,9 +15,14 @@
                     {{> mod_ctsr/pane }}
                 {{/tabs}}
             </div>
-            <div class="d-flex justify-content-between  ">
+            <div class="d-flex justify-content-between">
+                {{^finishpage}}
                 {{{update}}}
                 {{{submit}}}
+                {{/finishpage}}
+                {{#finishpage}}
+                    <a href="{{finishpage}}" class="ml-auto btn btn-secondary">View finish page</a>
+                {{/finishpage}}
             </div>
         </div>
     </div>

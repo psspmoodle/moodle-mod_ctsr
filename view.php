@@ -25,14 +25,23 @@ $ctsr = $DB->get_record('ctsr', array('id'=>$cm->instance), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
-//$context = context_module::instance($cm->id);
-//require_capability('mod/ctsr:view', $context);
+$context = context_module::instance($cm->id);
+$isadmin = has_capability('mod/ctsr:manageinstance', $context);
 
-// Update Moodle completion
-$completion = new completion_info($COURSE);
-$completion->set_module_viewed($cm);
+$persistent = null;
 
-$persistent = ctsr_user::get_record(['ctsr_id' => $ctsr->id, 'user_id' => $USER->id]);
+if (!$isadmin) {
+    // Update Moodle completion
+    $completion = new completion_info($COURSE);
+    $completion->set_module_viewed($cm);
+    // Set persistent
+    $persistent = ctsr_user::get_record(['ctsr_id' => $ctsr->id, 'user_id' => $USER->id]) ?: null;
+    // Redirect if already submitted
+    if ($persistent && $persistent->get('submitted')) {
+        redirect(new moodle_url('/mod/ctsr/finish.php', ['id' => $cmid]));
+    }
+}
+
 $customdata = [
     'persistent' => $persistent,
     'ctsr_id' => $ctsr->id,
@@ -47,28 +56,30 @@ $PAGE->set_heading($COURSE->fullname);
 
 $form = new form($PAGE->url->out(false), $customdata);
 
-if ($data = $form->get_data()) {
-    if (empty($data->id)) {
-        $persistent = new ctsr_user(0, $data);
-        $persistent->create();
-    } else {
-        $persistent->from_record($data);
-        $persistent->update();
+if (!$isadmin) {
+    if ($data = $form->get_data()) {
+        if (empty($data->id)) {
+            $persistent = new ctsr_user(0, $data);
+            $persistent->create();
+        } else {
+            $persistent->from_record($data);
+            $persistent->update();
+        }
+        if (optional_param('submitbutton', '', PARAM_TEXT)) {
+            $persistent->set('submitted', 1);
+            $persistent->update();
+            redirect(new moodle_url('/mod/ctsr/finish.php', ['id' => $cmid]));
+        }
     }
 }
-
-if (optional_param('submitbutton', '', PARAM_TEXT)) {
-    redirect(new moodle_url('/mod/ctsr/finish.php', ['id' => $cmid]));
-}
-
 // Load JS modules
 $PAGE->requires->js_call_amd('mod_ctsr/enable_tooltips', 'init');
-$PAGE->requires->js_call_amd('mod_ctsr/store_tab', 'init');
 $PAGE->requires->js_call_amd('mod_ctsr/show_total', 'init');
-//$PAGE->requires->js_call_amd('mod_ctsr/submit_comfirmation', 'init');
+$PAGE->requires->js_call_amd('mod_ctsr/store_tab', 'init');
+$PAGE->requires->js_call_amd('mod_ctsr/store_audio_time', 'init');
 
 // Output
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($ctsr->name), 2);
-echo $OUTPUT->render(new ctsr_view($cmid, $form));
+echo $OUTPUT->render(new ctsr_view($cmid, $ctsr, $form, $isadmin));
 echo $OUTPUT->footer();

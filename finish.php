@@ -11,9 +11,7 @@
 use mod_ctsr\ctsr_user;
 use mod_ctsr\output\ctsr_finish;
 
-
 require('../../config.php');
-//require_once($CFG->dirroot.'/mod/ctsr/lib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
 $cmid = optional_param('id', 0, PARAM_INT);
@@ -25,16 +23,21 @@ $ctsr = $DB->get_record('ctsr', array('id'=>$cm->instance), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
-//$context = context_module::instance($cm->id);
-//require_capability('mod/ctsr:view', $context);
+$context = context_module::instance($cm->id);
+$isadmin = has_capability('mod/ctsr:manageinstance', $context);
+$persistent = null;
 
-// Tell Moodle to check for completion
-$completion = new completion_info($course);
-if ($completion->is_enabled($cm) && $ctsr->completion_submission) {
-    $completion->update_state($cm, COMPLETION_COMPLETE);
+if (!$isadmin) {
+    $persistent = ctsr_user::get_record(['ctsr_id' => $ctsr->id, 'user_id' => $USER->id]);
+    if (!$persistent || !$persistent->get('submitted')) {
+        redirect(new moodle_url('/mod/ctsr/view.php', ['id' => $cmid]));
+    }
+    // Tell Moodle to check for completion
+    $completion = new completion_info($course);
+    if ($completion->is_enabled($cm) && $ctsr->completion_submission) {
+        $completion->update_state($cm, COMPLETION_COMPLETE);
+    }
 }
-
-$persistent = ctsr_user::get_record(['ctsr_id' => $ctsr->id, 'user_id' => $USER->id]);
 
 // $PAGE setup
 $PAGE->set_url('/mod/ctsr/finish.php', ['id' => $cmid]);
@@ -42,12 +45,8 @@ $PAGE->set_activity_record($ctsr);
 $PAGE->set_title($COURSE->shortname. ': '. $ctsr->name);
 $PAGE->set_heading($COURSE->fullname);
 
-// Load JS modules
-
-//$PAGE->requires->js_call_amd('mod_ctsr/submit_comfirmation', 'init');
-
 // Output
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($ctsr->name), 2);
-echo $OUTPUT->render(new ctsr_finish($ctsr, $persistent));
+echo $OUTPUT->render(new ctsr_finish($cmid, $ctsr, $persistent));
 echo $OUTPUT->footer();

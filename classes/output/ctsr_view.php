@@ -3,7 +3,12 @@
 namespace mod_ctsr\output;
 
 use coding_exception;
+use context;
+use context_module;
 use DOMXPath;
+use mod_ctsr\ctsr_form;
+use moodle_exception;
+use moodle_url;
 use renderable;
 use stdClass;
 use templatable;
@@ -13,16 +18,50 @@ use mod_ctsr\util;
 
 class ctsr_view implements renderable, templatable
 {
-
+    /**
+     * @var $cmid int
+     */
     private $cmid;
+
+    /**
+     * @var $ctsr object
+     */
+    private $ctsr;
+
+    /**
+     * @var $form ctsr_form The user input form.
+     */
     private $form;
 
-    public function __construct($cmid, $form)
+    /**
+     * @var $isadmin bool
+     */
+    private $isadmin;
+
+    /**
+     * @var bool|context|context_module
+     */
+    private $context;
+
+    /**
+     * @param int $cmid
+     * @param object $ctsr
+     * @param $form ctsr_form
+     * @param bool $isadmin
+     */
+    public function __construct(int $cmid, object $ctsr, ctsr_form $form, bool $isadmin = false)
     {
         $this->cmid = $cmid;
+        $this->ctsr = $ctsr;
         $this->form = $form;
+        $this->isadmin = $isadmin;
+        $this->context = context_module::instance($cmid);
     }
 
+    /**
+     * @param $node
+     * @return mixed|null
+     */
     private function get_next_non_textnode($node)
     {
         foreach ($node->childNodes as $child) {
@@ -33,6 +72,12 @@ class ctsr_view implements renderable, templatable
         return null;
     }
 
+    /**
+     * Item titles.
+     *
+     * @param $key
+     * @return string
+     */
     private function get_item_title($key): string
     {
         $titles = [
@@ -53,11 +98,16 @@ class ctsr_view implements renderable, templatable
     }
 
     /**
+     * Turn Moodle's form output into something more flexible for tabbed display. Liberal use of DOMDocument.
+     *
      * @throws coding_exception
+     * @throws moodle_exception
      */
-    public function export_for_template(renderer_base $output)
+    public function export_for_template(renderer_base $output): stdClass
     {
         $data = new stdClass;
+        $data->intro = file_rewrite_pluginfile_urls($this->ctsr->intro, 'pluginfile.php', $this->context->id, 'mod_ctsr', 'intro', null);
+
         $domdoc = util::open_domdocument($this->form->render());
         $xpath = new DOMXPath($domdoc);
         // Form element and children
@@ -93,6 +143,9 @@ class ctsr_view implements renderable, templatable
         $submit->removeAttribute('class');
         $data->update = $update->ownerDocument->saveHTML($update);
         $data->submit = $submit->ownerDocument->saveHTML($submit);
+        if ($this->isadmin) {
+            $data->finishpage = new moodle_url('/mod/ctsr/finish.php', ['id' => $this->cmid]);
+        }
         // Close form
         $data->formclose = '</form>';
         return $data;

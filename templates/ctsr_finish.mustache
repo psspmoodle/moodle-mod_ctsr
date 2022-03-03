@@ -1,5 +1,41 @@
 {{#finish}}
-    {{> mod_ctsr/score}}
-    {{> mod_ctsr/comments}}
+    <h3 class="pl-3 py-2 bg-lb50 mb-0">Item {{{number}}}: {{{item}}}</h3>
+    <table class="table mb-3 mt-0 font-weight-bold">
+        <thead>
+        <tr>
+            <td class="text-center" style="width: 33%">
+                Your score
+            </td>
+            <td class="text-center" style="width: 33%">
+                Expert's score
+            </td>
+            <td class="text-center">
+                Learner mean score
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        {{#content}}
+            {{> mod_ctsr/score_row }}
+        {{/content}}
+        </tbody>
+    </table>
+    <table class="table mb-5">
+        <thead>
+        <tr class="font-weight-bold">
+            <td class="text-center w-50">
+                Your comments
+            </td>
+            <td class="text-center">
+                Expert's comments
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        {{#content}}
+            {{> mod_ctsr/comments_row }}
+        {{/content}}
+        </tbody>
+    </table>
 {{/finish}}
 

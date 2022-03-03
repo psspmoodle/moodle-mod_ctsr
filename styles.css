@@ -10,7 +10,6 @@ a.ctsr-tab {
 
 .ctsr-tab {
     border-left: thin solid #eee;
-    border-top: thin solid #eee;
     border-bottom: thin solid #eee;
     transition: all 0.2s ease-in-out;
 }
@@ -21,4 +20,8 @@ a.ctsr-tab {
 
 a#pills-1-tab {
     border-left: 0;
+}
+
+.tooltip-inner {
+    font-family: sans-serif;
 }

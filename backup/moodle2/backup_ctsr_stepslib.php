@@ -25,6 +25,9 @@ class backup_ctsr_activity_structure_step extends backup_activity_structure_step
                 'name',
                 'intro',
                 'introformat',
+                'finish_content',
+                'finish_contentformat',
+                'completion_submission',
                 'timemodified'
             ]
         );
@@ -69,6 +72,7 @@ class backup_ctsr_activity_structure_step extends backup_activity_structure_step
                 'item_12_score',
                 'item_12_comments',
                 'item_12_commentsformat',
+                'submitted',
                 'usermodified',
                 'timecreated',
                 'timemodified'

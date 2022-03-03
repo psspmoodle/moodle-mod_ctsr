@@ -1,4 +1,4 @@
-define([], function() {
+define(function() {
     return {
         init: function() {
             // get select elements
