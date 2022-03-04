@@ -72,11 +72,8 @@ if (!$isadmin) {
         }
     }
 }
-// Load JS modules
-$PAGE->requires->js_call_amd('mod_ctsr/enable_tooltips', 'init');
-$PAGE->requires->js_call_amd('mod_ctsr/show_total', 'init');
-$PAGE->requires->js_call_amd('mod_ctsr/store_tab', 'init');
-$PAGE->requires->js_call_amd('mod_ctsr/store_audio_time', 'init');
+// Load JS module
+$PAGE->requires->js_call_amd('mod_ctsr/ctsr', 'init');
 
 // Output
 echo $OUTPUT->header();

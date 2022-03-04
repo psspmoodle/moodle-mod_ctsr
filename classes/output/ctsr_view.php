@@ -107,7 +107,6 @@ class ctsr_view implements renderable, templatable
     {
         $data = new stdClass;
         $data->intro = file_rewrite_pluginfile_urls($this->ctsr->intro, 'pluginfile.php', $this->context->id, 'mod_ctsr', 'intro', null);
-
         $domdoc = util::open_domdocument($this->form->render());
         $xpath = new DOMXPath($domdoc);
         // Form element and children
