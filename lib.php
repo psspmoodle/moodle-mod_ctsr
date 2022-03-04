@@ -122,7 +122,10 @@ function ctsr_reset_userdata($data): array
 }
 
 /**
- * Called by course/reset.php
+ * Form elements for course/reset.php. See @ctsr_reset_course_form_defaults
+ *
+ * @param $mform
+ * @return void
  */
 function ctsr_reset_course_form_definition(&$mform)
 {
@@ -130,6 +133,12 @@ function ctsr_reset_course_form_definition(&$mform)
     $mform->addElement('checkbox', 'reset_user_progress', util::s('ctsr_reset_all_user_progress'));
 }
 
+/**
+ * If the 'Select default' button is pressed on course/reset.php, this checkbox will be checked.
+ *
+ * @param $course
+ * @return int[]
+ */
 function ctsr_reset_course_form_defaults($course)
 {
     return ['reset_user_progress' => 1];
