@@ -48,5 +48,5 @@ $PAGE->set_heading($COURSE->fullname);
 // Output
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($ctsr->name), 2);
-echo $OUTPUT->render(new ctsr_finish($cmid, $ctsr, $persistent));
+echo $OUTPUT->render(new ctsr_finish($ctsr, $persistent));
 echo $OUTPUT->footer();

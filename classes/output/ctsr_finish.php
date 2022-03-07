@@ -33,15 +33,31 @@ class ctsr_finish implements renderable, templatable
     private $isadmin;
 
     /**
-     * @param int $cmid
+     * @var $records ctsr_user[]
+     */
+    private $records;
+
+    /**
+     * @var $totalexpertscore float
+     */
+    private $totalexpertscore;
+
+    /**
+     * @var $totaluserscore float
+     */
+    private $totaluserscore;
+
+    /**
      * @param object $ctsr
      * @param $ctsruser ctsr_user|null Null if admin.
      */
-    public function __construct(int $cmid, object $ctsr, persistent $ctsruser = null)
+    public function __construct(object $ctsr, persistent $ctsruser = null)
     {
         $this->ctsr = $ctsr;
         $this->ctsruser = $ctsruser;
         $this->isadmin = !$ctsruser;
+        $this->records = ctsr_user::get_records(['ctsr_id' => $this->ctsr->id, 'submitted' => 1]);
+
     }
 
     /**
@@ -103,8 +119,10 @@ class ctsr_finish implements renderable, templatable
             $row->number = $itemnum;
             $row->item = $v['item'];
             $content->userscore = !$this->isadmin ? $this->ctsruser->get($item . "_score") : null;
+            $this->totaluserscore += $content->userscore;
             $content->expertscore = $v['exp_score'];
-            $content->meanscore = $this->get_mean_score(str_pad($itemnum, 2, 0, STR_PAD_LEFT));
+            $this->totalexpertscore += $v['exp_score'];
+            $content->meanscore = $this->num($this->get_mean_score(str_pad($itemnum, 2, 0, STR_PAD_LEFT)));
             $content->comments = !$this->isadmin ? $this->ctsruser->get($item . "_comments") : null;
             $content->expertcomments = $v['exp_comments'];
             $row->content = $content;
@@ -117,19 +135,52 @@ class ctsr_finish implements renderable, templatable
      * Get the mean of all user scores for an item in a CTSR activity.
      *
      * @param $item
-     * @return float|int
+     * @return float
      * @throws coding_exception
      */
-    private function get_mean_score($item)
+    private function get_mean_score($item): float
     {
-        $records = ctsr_user::get_records(['ctsr_id' => $this->ctsr->id, 'submitted' => 1]);
-        if (!$records) {
-            return 0;
+        if (!$this->records) {
+            return 0.0;
         }
         $scores = array_map(function($v) use ($item) {
             return (float) $v->get('item_' . $item . '_score');
-        }, $records);
-        return array_sum($scores) / count($records);
+        }, $this->records);
+        return array_sum($scores) / count($this->records);
+    }
+
+    /**
+     * Get the mean of total user scores of all users.
+     *
+     * @return float
+     */
+    private function get_total_mean_score(): float
+    {
+        if (!$this->records) {
+            return 0.0;
+        }
+        $rowsums = [];
+        foreach ($this->records as $record) {
+            $rowsum = 0;
+            foreach ((array) $record->to_record() as $key => $val) {
+                if (strpos($key, '_score') !== false) {
+                    $rowsum += $val;
+                }
+            }
+            $rowsums[] = $rowsum;
+        }
+        return array_sum($rowsums) / count($this->records);
+    }
+
+    /**
+     * Wrapper to ensure 1 decimal point.
+     *
+     * @param $num
+     * @return string
+     */
+    private function num($num)
+    {
+        return number_format($num, 1);
     }
 
 
@@ -142,6 +193,9 @@ class ctsr_finish implements renderable, templatable
     {
         $data = new stdClass();
         $data->finish = $this->make_finish_tables();
+        $data->totaluserscore = $this->num($this->totaluserscore);
+        $data->totalexpertscore = $this->num($this->totalexpertscore);
+        $data->totalmeanscore = $this->num($this->get_total_mean_score());
         return $data;
     }
 }
