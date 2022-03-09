@@ -46,7 +46,7 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
      * @returns {number}
      */
     function getSum() {
-        let sum = 0.0;
+        var sum = 0.0;
         SELECTS.forEach(function(el) {
             sum += parseFloat(el.value);
         })
