@@ -60,4 +60,12 @@ class restore_ctsr_activity_structure_step extends restore_activity_structure_st
         $DB->insert_record('ctsr_user', $data);
     }
 
+    /**
+     * @return void
+     */
+    protected function after_execute()
+    {
+        $this->add_related_files('mod_ctsr', 'intro', null);
+    }
+
 }

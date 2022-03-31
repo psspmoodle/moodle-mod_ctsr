@@ -31,6 +31,7 @@ class backup_ctsr_activity_structure_step extends backup_activity_structure_step
                 'timemodified'
             ]
         );
+        $ctsr->annotate_files('mod_ctsr', 'intro', null);
         $ctsrusers = new backup_nested_element('ctsr_users');
         $ctsruser = new backup_nested_element('ctsr_user', ['id'],
             [
