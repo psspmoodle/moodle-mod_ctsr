@@ -63,11 +63,11 @@ if (!$isadmin) {
             $persistent->create();
         } else {
             $persistent->from_record($data);
+            if (optional_param('submitbutton', '', PARAM_TEXT)) {
+                $persistent->set('submitted', 1);
+            }
             $persistent->update();
-        }
-        if (optional_param('submitbutton', '', PARAM_TEXT)) {
-            $persistent->set('submitted', 1);
-            $persistent->update();
+            // Always redirect for both Save Progress and Submit to prevent back button issues
             redirect(new moodle_url('/mod/ctsr/finish.php', ['id' => $cmid]));
         }
     }
