@@ -92,8 +92,6 @@ class ctsr_form extends persistent
         $mform->setType('item_12_comments', PARAM_RAW);
 
         $mform->addElement('submit', 'updatectsr', 'Save progress');
-        $mform->registerNoSubmitButton('updatectsr');
-
         $mform->addElement('submit', 'submitbutton', 'Submit');
     }
 
@@ -101,20 +99,5 @@ class ctsr_form extends persistent
     {
         $scores = ['0', '0.5', '1.0', '1.5', '2.0', '2.5', '3.0', '3.5', '4.0', '4.5', '5.0', '5.5', '6.0'];
         return array_combine($scores, $scores);
-    }
-
-    /**
-     * This is overwritten because we are updating the DB record on Update (which is a 'nosubmitbutton'),
-     * and therefore we need to validate the fields (pass 'true').
-     *
-     * @return bool|null
-     */
-    public function is_validated()
-    {
-        if (!$this->_definition_finalized) {
-            $this->_definition_finalized = true;
-            $this->definition_after_data();
-        }
-        return $this->validate_defined_fields(true);
     }
 }
