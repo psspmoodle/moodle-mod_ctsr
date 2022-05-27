@@ -7,7 +7,7 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
     const comments = [...Array(13).keys()].slice(1).map(function(i) { return "#id_item_" + String(i).padStart(2,0) + "_comments"})
     const COMMENTS = document.querySelectorAll(comments)
     const SUBMITBUTTON = document.querySelector('#id_submitbutton')
-    const SUBMITWRAPPER = document.querySelectorAll('#submit-buttom-wrapper')
+    const SUBMITWRAPPER = document.querySelector('#submit-button-wrapper')
     let scores = [...Array(13).keys()].slice(1).map(function(i) { return "#ctsr-score-total-" + i})
     const TOTALSPANS = document.querySelectorAll(scores)
 
@@ -127,9 +127,9 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
 
     function alterSubmitTooltip(done) {
         if (done) {
-            SUBMITWRAPPER.removeAttribute('data-tooltip')
+            $(SUBMITWRAPPER).tooltip('disable')
         } else {
-            SUBMITWRAPPER.setAttribute('data-tooltip', 'tooltip')
+            $(SUBMITWRAPPER).tooltip('enable')
         }
     }
 
