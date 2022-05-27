@@ -4,14 +4,19 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
     const AUDIOKEY = 'mod_ctsr/audio-' + getCmid()
     const AUDIOEL = document.querySelector('#ctsr-audio')
     const SELECTS = document.querySelectorAll('select[id$="score"]')
-    const TOTALSPANS = document.querySelectorAll('#ctsr-score-total')
+    const comments = [...Array(13).keys()].slice(1).map(function(i) { return "#id_item_" + String(i).padStart(2,0) + "_comments"})
+    const COMMENTS = document.querySelectorAll(comments)
+    const SUBMITBUTTON = document.querySelector('#id_submitbutton')
+    const SUBMITWRAPPER = document.querySelectorAll('#submit-buttom-wrapper')
+    let scores = [...Array(13).keys()].slice(1).map(function(i) { return "#ctsr-score-total-" + i})
+    const TOTALSPANS = document.querySelectorAll(scores)
 
     /**
      * Get course module ID from body class.
      * @returns {string}
      */
     function getCmid() {
-        return document.querySelector('body').className.match(/cmid-(\d+)/)[1];
+        return document.querySelector('body').className.match(/cmid-(\d+)/)[1]
     }
 
     /**
@@ -37,7 +42,7 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
      */
     function updateSpan(num) {
         TOTALSPANS.forEach(function(el) {
-            el.innerHTML = num.toFixed(1);
+            el.innerHTML = num.toFixed(1)
         });
     }
 
@@ -46,11 +51,11 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
      * @returns {number}
      */
     function getSum() {
-        var sum = 0.0;
+        var sum = 0.0
         SELECTS.forEach(function(el) {
-            sum += parseFloat(el.value);
+            if (el.value > -1) sum += parseFloat(el.value)
         })
-        return sum;
+        return sum
     }
 
     /**
@@ -61,7 +66,7 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
             if (e.target.classList.contains('ctsr-tab')) {
                 LocalStorage.set(TABKEY, e.target.id.match(/\d+/))
             }
-        });
+        })
     }
 
     /**
@@ -69,9 +74,9 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
      */
     function addAudioListener() {
         AUDIOEL.addEventListener('timeupdate', function() {
-            LocalStorage.set(AUDIOKEY, AUDIOEL.currentTime);
+            LocalStorage.set(AUDIOKEY, AUDIOEL.currentTime)
             if (AUDIOEL.ended) {
-                LocalStorage.set(AUDIOKEY, '0');
+                LocalStorage.set(AUDIOKEY, '0')
             }
         })
     }
@@ -83,8 +88,49 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
         SELECTS.forEach(function(el) {
             el.addEventListener('change', function() {
                 updateSpan(getSum())
+                validateFields()
             })
         })
+    }
+
+    function addTextareaListener() {
+        COMMENTS.forEach(function(el) {
+            el.addEventListener('change', function() {
+                validateFields()
+            })
+        })
+    }
+
+    function validateFields() {
+        if (!SUBMITBUTTON) {
+            return false
+        }
+        const filteredScores = [...SELECTS].filter(function(el) {
+            return el.value > -1
+        })
+        scoresResult = filteredScores.length == SELECTS.length
+        const filteredComments = [...COMMENTS].filter(function(el) {
+            let html = $.parseHTML(el.value)
+            return $(html).text()
+        })
+        let commentsResult = filteredComments.length == COMMENTS.length
+        let done = scoresResult && commentsResult
+        if (done) {
+            SUBMITBUTTON.removeAttribute('style', 'pointer-events: initial')
+            SUBMITBUTTON.removeAttribute('disabled', 'disabled')
+        } else {
+            SUBMITBUTTON.setAttribute('style', 'pointer-events: none')
+            SUBMITBUTTON.setAttribute('disabled', 'disabled')
+        }
+        alterSubmitTooltip(done)
+    }
+
+    function alterSubmitTooltip(done) {
+        if (done) {
+            SUBMITWRAPPER.removeAttribute('data-tooltip')
+        } else {
+            SUBMITWRAPPER.setAttribute('data-tooltip', 'tooltip')
+        }
     }
 
     /**
@@ -93,6 +139,8 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
     this.prepareCtsr = function() {
         // Add tooltip functionality
         $('[data-toggle="tooltip"]').tooltip()
+        // See if it's already complete
+        validateFields()
         // Check for local storage
         const tab = LocalStorage.get(TABKEY) || 1
         const time = LocalStorage.get(AUDIOKEY) || 0
@@ -104,6 +152,7 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
         addTabListener()
         addAudioListener()
         addSelectListener()
+        addTextareaListener()
     }
 
     return {

@@ -18,7 +18,8 @@
             <div class="d-flex justify-content-between">
                 {{^finishpage}}
                 {{{update}}}
-                {{{submit}}}
+                {{! Bootstrap tooltips need a wrapper around a disabled button to display a tooltip on that button}}
+                <span id="submit-button-wrapper" data-toggle="tooltip" title="Please complete all Score and Comments fields.">{{{submit}}}</span>
                 {{/finishpage}}
                 {{#finishpage}}
                     <a href="{{finishpage}}" class="ml-auto btn btn-secondary">View finish page</a>

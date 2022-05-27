@@ -92,12 +92,13 @@ class ctsr_form extends persistent
         $mform->setType('item_12_comments', PARAM_RAW);
 
         $mform->addElement('submit', 'updatectsr', 'Save progress');
-        $mform->addElement('submit', 'submitbutton', 'Submit');
+        // Bootstrap tooltips need a disabled button to have 'pointer-events: none'
+        $mform->addElement('submit', 'submitbutton', 'Submit', ['disabled' => 'disabled', 'style' => 'pointer-events: none']);
     }
 
     private function make_scoring_select_items()
     {
         $scores = ['0', '0.5', '1.0', '1.5', '2.0', '2.5', '3.0', '3.5', '4.0', '4.5', '5.0', '5.5', '6.0'];
-        return array_combine($scores, $scores);
+        return [-1 => 'Select:'] + array_combine($scores, $scores);
     }
 }
