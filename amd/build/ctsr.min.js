@@ -1,4 +1,4 @@
-define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'], function($, LocalStorage) {
+define(['jquery','core/localstorage', 'theme_boost/bootstrap/tab', 'theme_boost/bootstrap/tooltip'], function($, LocalStorage, Tab, Tooltip) {
 
     const TABKEY = 'mod_ctsr/tab-' + getCmid()
     const AUDIOKEY = 'mod_ctsr/audio-' + getCmid()
@@ -116,8 +116,8 @@ define(['jquery','core/localstorage', 'theme_boost/tab', 'theme_boost/tooltip'],
         let commentsResult = filteredComments.length == COMMENTS.length
         let done = scoresResult && commentsResult
         if (done) {
-            SUBMITBUTTON.removeAttribute('style', 'pointer-events: initial')
-            SUBMITBUTTON.removeAttribute('disabled', 'disabled')
+            SUBMITBUTTON.removeAttribute('style')
+            SUBMITBUTTON.removeAttribute('disabled')
         } else {
             SUBMITBUTTON.setAttribute('style', 'pointer-events: none')
             SUBMITBUTTON.setAttribute('disabled', 'disabled')

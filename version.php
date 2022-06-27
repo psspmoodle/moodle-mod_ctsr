@@ -10,6 +10,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022052701;
+$plugin->version   = 2022062702;
 $plugin->requires  = 2019051100;
 $plugin->component = 'mod_ctsr';
